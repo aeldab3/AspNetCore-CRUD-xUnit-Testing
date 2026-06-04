@@ -1,6 +1,7 @@
 <Solution>
-  <Project Path="CRUDExample/CRUDExample.csproj" />
-  <Project Path="CRUDTests/CRUDTests.csproj" />
-  <Project Path="Entities/Entities.csproj" />
-  <Project Path="ServiceContracts/ServiceContracts.csproj" />
+  <Project Path="E:/a7med/language/CSharpLearning/CRUDExample/CRUDSolution/CRUDExample/CRUDExample.csproj" />
+  <Project Path="E:/a7med/language/CSharpLearning/CRUDExample/CRUDSolution/CRUDTests/CRUDTests.csproj" />
+  <Project Path="E:/a7med/language/CSharpLearning/CRUDExample/CRUDSolution/Entities/Entities.csproj" />
+  <Project Path="E:/a7med/language/CSharpLearning/CRUDExample/CRUDSolution/ServiceContracts/ServiceContracts.csproj" />
+  <Project Path="E:/a7med/language/CSharpLearning/CRUDExample/CRUDSolution/Services/Services.csproj" Id="109f6913-17cc-43e5-b590-02d20525a231" />
 </Solution>
