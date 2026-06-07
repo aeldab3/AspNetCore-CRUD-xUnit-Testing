@@ -15,6 +15,11 @@ namespace Services
             _countries = new List<Country>();
         }
 
+        /// <summary>
+        /// This method adds a new country to the list of countries.
+        /// </summary>
+        /// <param name="countryAddRequest"></param>
+        /// <returns>CountryResponse object representing the newly added country.</returns>
         public CountryResponse AddCountry(CountryAddRequest? countryAddRequest)
         {
             if (countryAddRequest == null)
@@ -32,6 +37,15 @@ namespace Services
 
             _countries.Add(country);
             return country.ToCountryResponse();
+        }
+
+        /// <summary>
+        /// This method retrieves a list of all countries.
+        /// </summary>
+        /// <returns>List of CountryResponse objects representing each country in the list.</returns>
+        public List<CountryResponse> GetAllCountries()
+        {
+            throw new NotImplementedException();
         }
     }
 }

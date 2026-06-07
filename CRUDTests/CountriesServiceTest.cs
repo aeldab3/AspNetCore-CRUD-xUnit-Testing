@@ -19,6 +19,8 @@ namespace CRUDTests
             _countriesService = new CountriesService();
         }
 
+        #region Add Country Tests
+
         // When Country Add Request is Null
         [Fact]
         public void AddCountry_NullCountry()
@@ -88,8 +90,57 @@ namespace CRUDTests
             // Act
             CountryResponse response = _countriesService.AddCountry(request);
 
+            List<CountryResponse> countries_from_GetAllCountries =  _countriesService.GetAllCountries();
+
             // Assert
             Assert.True(response.CountryID != Guid.Empty);
+
+            Assert.Contains(response, countries_from_GetAllCountries);
         }
+
+
+        #endregion
+
+        #region get all countries tests
+
+        // when there are no countries in the list, then it should return empty list
+        [Fact]
+        public void GetAllCountries_EmptyList()
+        {
+            // Act
+            List<CountryResponse> countryResponses = _countriesService.GetAllCountries();
+
+            //Assert
+            Assert.Empty(countryResponses);
+        }
+
+        // when there are some countries in the list, then it should return list of countries
+        [Fact]
+        public void GetAllCountries_AddFewCountries()
+        {
+            // Arrange
+            List<CountryResponse> countryResponses = new List<CountryResponse>();
+            List<CountryAddRequest> country_request_list = new List<CountryAddRequest>()
+            {
+                new CountryAddRequest() { CountryName = "Egypt" },
+                new CountryAddRequest() { CountryName = "Saudi Arabia" }
+            };
+
+            // Act
+            foreach (CountryAddRequest countryAddRequest in country_request_list)
+            {
+                countryResponses.Add(_countriesService.AddCountry(countryAddRequest));
+            }
+
+            List<CountryResponse> actualCountrieResponsesList =  _countriesService.GetAllCountries();
+
+            // Read each country response from the list of country responses and check whether it is present in the actual country responses list or not
+            // Assert
+            foreach (CountryResponse countryResponse in countryResponses)
+            {
+                Assert.Contains(countryResponse, actualCountrieResponsesList);
+            }
+        }
+        #endregion
     }
 }
