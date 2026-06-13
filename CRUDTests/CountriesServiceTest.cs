@@ -102,7 +102,7 @@ namespace CRUDTests
         #endregion
 
 
-        #region get all countries tests
+        #region Get all countries Tests
 
         // when there are no countries in the list, then it should return empty list
         [Fact]
@@ -142,6 +142,42 @@ namespace CRUDTests
                 Assert.Contains(countryResponse, actualCountrieResponsesList);
             }
         }
+        #endregion
+
+        #region Get Country By CountryID Tests
+
+        // when you supply null country ID, then it should return null
+        [Fact]
+        public void GetCountryByCountryID_NullCountryID()
+        {
+            // Arrange
+            Guid? countryId = null;
+
+            // Act
+            CountryResponse? countryResponse = _countriesService.GetCountryByCountryID(countryId);
+
+            // Assery
+            Assert.Null(countryId);
+        }
+
+
+        [Fact]
+        public void GetCountryByCountryID_ValidCountryID()
+        {
+            // Arrange
+            CountryAddRequest? request = new CountryAddRequest()
+            {
+                CountryName = "Egypt"
+            };
+            CountryResponse countryResponse = _countriesService.AddCountry(request);
+
+            // Act
+            CountryResponse? actualCountryResponse = _countriesService.GetCountryByCountryID(countryResponse.CountryID);
+
+            // Assert
+            Assert.Equal(countryResponse, actualCountryResponse);
+        }
+
         #endregion
     }
 }

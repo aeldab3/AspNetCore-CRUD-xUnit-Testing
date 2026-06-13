@@ -15,11 +15,7 @@ namespace Services
             _countries = new List<Country>();
         }
 
-        /// <summary>
-        /// This method adds a new country to the list of countries.
-        /// </summary>
-        /// <param name="countryAddRequest"></param>
-        /// <returns>CountryResponse object representing the newly added country.</returns>
+
         public CountryResponse AddCountry(CountryAddRequest? countryAddRequest)
         {
             if (countryAddRequest == null)
@@ -39,13 +35,20 @@ namespace Services
             return country.ToCountryResponse();
         }
 
-        /// <summary>
-        /// This method retrieves a list of all countries.
-        /// </summary>
-        /// <returns>List of CountryResponse objects representing each country in the list.</returns>
+
         public List<CountryResponse> GetAllCountries()
         {
             return _countries.Select(c => c.ToCountryResponse()).ToList();
+        }
+
+
+        public CountryResponse GetCountryByCountryID(Guid? countryID)
+        {
+            if (countryID == null) return null;
+
+            Country? country = _countries.FirstOrDefault(c => c.CountryID == countryID) ?? throw new KeyNotFoundException($"Country with ID '{countryID}' not found.");
+
+            return country.ToCountryResponse();
         }
     }
 }
