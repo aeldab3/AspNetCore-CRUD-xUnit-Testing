@@ -157,7 +157,7 @@ namespace CRUDTests
             CountryResponse? countryResponse = _countriesService.GetCountryByCountryID(countryId);
 
             // Assery
-            Assert.Null(countryId);
+            Assert.Null(countryResponse);
         }
 
 

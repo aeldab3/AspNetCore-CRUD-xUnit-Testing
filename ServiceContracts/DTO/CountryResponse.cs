@@ -31,9 +31,12 @@ namespace ServiceContracts.DTO
     }
 
 
-    // Extension method to convert a Country object to a CountryResponse object.
     public static class CountryExtensions
     {
+        /// <summary>
+        /// Converting Country entities to CountryResponse DTOs.
+        /// </summary>
+        ///<returns>CountryResponse object</returns>
         public static CountryResponse ToCountryResponse(this Country country)
         {
             return new CountryResponse()
