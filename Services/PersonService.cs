@@ -1,6 +1,9 @@
 ﻿using Entities.Models;
 using ServiceContracts;
 using ServiceContracts.DTO;
+using Services.Helper;
+using System.ComponentModel.DataAnnotations;
+using System.Data;
 
 
 namespace Services
@@ -21,7 +24,8 @@ namespace Services
         public PersonResponse AddPerson(PersonAddRequest? personRequest)
         {
             if (personRequest == null) throw new ArgumentNullException(nameof(personRequest));
-            if (string.IsNullOrWhiteSpace(personRequest.PersonName)) throw new ArgumentException(nameof(personRequest.PersonName));
+
+            ValidationHelper.ModelValidation(personRequest);
 
             Person person = personRequest.ToPerson();
 
@@ -39,12 +43,24 @@ namespace Services
             throw new NotImplementedException();
         }
 
+        public PersonResponse? GetPersonByPersonId(Guid? personId)
+        {
+            if (personId == null) return null;
+
+            Person? person = _persons.FirstOrDefault(p => p.PersonID == personId);
+            if (person == null) return null;
+
+            PersonResponse personResponse = person.ToPersonResponse();
+            return personResponse;
+        }
+
+
         /// <summary>
-        /// 
+        /// Used To Convert Person to Person Response
         /// </summary>
         /// <param name="person"></param>
-        /// <returns></returns>
-        private PersonResponse convertPersonToPersonResponse(Person person)
+        /// <returns>Person Response</returns>
+        private PersonResponse? convertPersonToPersonResponse(Person person)
         {
             PersonResponse personResponse = person.ToPersonResponse();
             personResponse.Country = _countriesService.GetCountryByCountryID(person.CountryId)?.CountryName;

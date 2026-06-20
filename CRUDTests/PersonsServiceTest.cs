@@ -11,10 +11,12 @@ namespace CRUDTests
     public class PersonsServiceTest
     {
         private readonly IPersonService _personService;
+        private readonly ICountriesService _countriesService;
 
         public PersonsServiceTest()
         {
             _personService = new PersonService();
+            _countriesService = new CountriesService();
         }
 
 
@@ -72,8 +74,52 @@ namespace CRUDTests
             // Assert
             Assert.True(personResponse.PersonID != Guid.Empty);
             Assert.Contains(personResponse, personsList);
-
         }
 
+
+        // When
+        [Fact]
+        public void GetPersonByPersonId_NullPersonID()
+        {
+            // Arrange
+            Guid? personId = null;
+
+            // Act
+            PersonResponse? personResponse = _personService.GetPersonByPersonId(personId);
+
+            // Assert
+            Assert.Null(personResponse);
+        }
+
+        // When
+        [Fact]
+        public void GetPersonByPersonID_WithPersonId() 
+        {
+            // Arrange
+            CountryAddRequest countryAddRequest = new CountryAddRequest()
+            {
+                CountryName = "Egypt"
+            };
+            CountryResponse countryResponse = _countriesService.AddCountry(countryAddRequest);
+
+            // Act
+            PersonAddRequest personAddRequest = new PersonAddRequest()
+            {
+                PersonName = "Ahmed",
+                Email = "a@gmail.com",
+                Gender = GenderOptions.Male,
+                Address = "Kz",
+                DateOfBirth = DateTime.Parse("1999-01-18"),
+                ReceiveNewsLetters = false,
+                CountryId = countryResponse.CountryID
+            };
+            PersonResponse personResponse = _personService.AddPerson(personAddRequest);
+
+            PersonResponse? getPersonByPersonId = _personService.GetPersonByPersonId(personResponse.PersonID);
+
+            // Assert
+            Assert.Equal(personResponse, getPersonByPersonId);
+
+        }
     }
 }
