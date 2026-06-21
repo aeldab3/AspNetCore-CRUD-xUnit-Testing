@@ -46,7 +46,9 @@ namespace Services
         {
             if (countryID == null) return null;
 
-            Country? country = _countries.FirstOrDefault(c => c.CountryID == countryID) ?? throw new KeyNotFoundException($"Country with ID '{countryID}' not found.");
+            Country? country = _countries.FirstOrDefault(c => c.CountryID == countryID);
+
+            if (country == null) return null;
 
             return country.ToCountryResponse();
         }

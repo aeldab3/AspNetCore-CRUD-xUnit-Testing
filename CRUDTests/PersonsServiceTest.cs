@@ -20,6 +20,7 @@ namespace CRUDTests
         }
 
 
+        #region Add Person
         // When Supply Null Value
         [Fact]
         public void AddPerson_NullPerson()
@@ -76,8 +77,11 @@ namespace CRUDTests
             Assert.Contains(personResponse, personsList);
         }
 
+        #endregion
 
-        // When
+        #region Get Person By Id
+
+        // When you get Person By Null Id
         [Fact]
         public void GetPersonByPersonId_NullPersonID()
         {
@@ -91,7 +95,7 @@ namespace CRUDTests
             Assert.Null(personResponse);
         }
 
-        // When
+        // When you get Person by person ID
         [Fact]
         public void GetPersonByPersonID_WithPersonId() 
         {
@@ -119,7 +123,89 @@ namespace CRUDTests
 
             // Assert
             Assert.Equal(personResponse, getPersonByPersonId);
+        }
+
+        #endregion
+
+
+        #region Get All Persons
+
+        [Fact]
+        public void GetAllPersons_EmptyList()
+        {
+            // Act
+            List<PersonResponse> AllPersons = _personService.GetAllPersons();
+
+            // Assert
+            Assert.Empty(AllPersons);
+        }
+
+
+        [Fact]
+        public void GetAllPersons_AddFewPersons()
+        {
+            // Arrange
+            CountryAddRequest countryAddRequest1 = new CountryAddRequest()
+            {
+                CountryName = "USA"
+            };
+
+            CountryAddRequest countryAddRequest2 = new CountryAddRequest()
+            {
+                CountryName = "UAE"
+            };
+            CountryResponse countryResponse1 = _countriesService.AddCountry(countryAddRequest1);
+            CountryResponse countryResponse2 = _countriesService.AddCountry(countryAddRequest2);
+
+            List<PersonResponse> personResponses_list_from_added = new List<PersonResponse>();
+
+            PersonAddRequest personAddRequest1 = new PersonAddRequest()
+            {
+                PersonName = "Mohammed",
+                Address = "Tanta",
+                Email = "mo@gmail.com",
+                Gender = GenderOptions.Male,
+                CountryId = countryResponse1.CountryID,
+                DateOfBirth = DateTime.Parse("1957-12-17"),
+                ReceiveNewsLetters = true,
+            };
+
+            PersonAddRequest personAddRequest2 = new PersonAddRequest()
+            {
+                PersonName = "Ali",
+                Address = "Tanta",
+                Email = "ali@gmail.com",
+                Gender = GenderOptions.Male,
+                CountryId = countryResponse1.CountryID,
+                DateOfBirth = DateTime.Parse("1993-09-01"),
+                ReceiveNewsLetters = true,
+            };
+
+            List<PersonAddRequest> addAllPersons = new List<PersonAddRequest>()
+            {
+                personAddRequest1, personAddRequest2
+            };
+
+            foreach (PersonAddRequest personAddRequest in addAllPersons)
+            {
+                PersonResponse allPersonsAdded = _personService.AddPerson(personAddRequest);
+                personResponses_list_from_added.Add(allPersonsAdded);
+            }
+
+            // Act
+            List<PersonResponse> getAllPersons = _personService.GetAllPersons();
+
+            // Assert
+            foreach(PersonResponse person in personResponses_list_from_added)
+            {
+                Assert.Contains(person, getAllPersons);
+            }
+
 
         }
+
+
+        #endregion
+
     }
 }
