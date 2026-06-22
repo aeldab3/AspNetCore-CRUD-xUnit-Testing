@@ -1,6 +1,7 @@
 ﻿using Entities.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Text;
 
 namespace ServiceContracts.DTO
@@ -38,6 +39,12 @@ namespace ServiceContracts.DTO
         public override int GetHashCode()
         {
             return base.GetHashCode();
+        }
+
+
+        public override string ToString()
+        {
+            return $"Person ID: {PersonID}, Person Name: {PersonName}, Email: {Email}, Address: {Address}, Country Id: {CountryId}, Date Of Birth: {DateOfBirth}, Gender: {Gender}, Receive News Letters {ReceiveNewsLetters}";
         }
     }
 

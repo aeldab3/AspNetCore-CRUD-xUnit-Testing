@@ -5,6 +5,8 @@ using Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Xunit.Abstractions;
+using Xunit.Sdk;
 
 namespace CRUDTests
 {
@@ -12,11 +14,13 @@ namespace CRUDTests
     {
         private readonly IPersonService _personService;
         private readonly ICountriesService _countriesService;
+        private readonly ITestOutputHelper _testOutputHelper;
 
-        public PersonsServiceTest()
+        public PersonsServiceTest(ITestOutputHelper testOutputHelper)
         {
             _personService = new PersonService();
             _countriesService = new CountriesService();
+            _testOutputHelper = testOutputHelper;
         }
 
 
@@ -192,18 +196,27 @@ namespace CRUDTests
                 personResponses_list_from_added.Add(allPersonsAdded);
             }
 
+            _testOutputHelper.WriteLine("Expected:");
+            foreach (PersonResponse expectedPerson in personResponses_list_from_added)
+            {
+                _testOutputHelper.WriteLine($"{expectedPerson.ToString()}");
+            }
+
             // Act
             List<PersonResponse> getAllPersons = _personService.GetAllPersons();
 
+            _testOutputHelper.WriteLine("Actual:");
+            foreach (PersonResponse person in getAllPersons)
+            {
+                _testOutputHelper.WriteLine($"{person.ToString()}");
+            }
+
             // Assert
-            foreach(PersonResponse person in personResponses_list_from_added)
+            foreach (PersonResponse person in personResponses_list_from_added)
             {
                 Assert.Contains(person, getAllPersons);
             }
-
-
         }
-
 
         #endregion
 
