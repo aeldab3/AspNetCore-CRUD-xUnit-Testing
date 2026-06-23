@@ -27,5 +27,13 @@ namespace ServiceContracts
         /// <returns>Person By Person Id <returns>
         PersonResponse? GetPersonByPersonId(Guid? personId);
 
+        /// <summary>
+        /// Used this to Get Persons By spacific Filterd.
+        /// </summary>
+        /// <param name="searchBy"></param>
+        /// <param name="searchString"></param>
+        /// <returns></returns>
+        List<PersonResponse> GetFilteredPersons(string searchBy, string? searchString);
+
     }
 }
