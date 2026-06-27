@@ -15,6 +15,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Entities\Entities.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update=".gitignore">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>.cs</LastGenOutput>
