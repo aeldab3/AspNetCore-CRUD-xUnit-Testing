@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Text.Json;
 
 namespace Entities.Models
 {
@@ -17,6 +16,24 @@ namespace Entities.Models
 
             modelBuilder.Entity<Country>().ToTable("Countries");
             modelBuilder.Entity<Person>().ToTable("Persons");
+
+
+            string countriesJson = File.ReadAllText("countries.json");
+
+            List<Country> countries = JsonSerializer.Deserialize<List<Country>>(countriesJson);
+
+            foreach (var country in countries)
+                modelBuilder.Entity<Country>().HasData(country);
+
+
+            string personsJson = File.ReadAllText("persons.json");
+
+            List<Person> persons = JsonSerializer.Deserialize<List<Person>>(personsJson);
+
+            foreach (var person in persons)
+                modelBuilder.Entity<Person>().HasData(person);
+
+
         }
     }
 }
