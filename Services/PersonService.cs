@@ -11,13 +11,13 @@ namespace Services
     public class PersonService : IPersonService
     {
 
-        private readonly List<Person> _persons;
+        private readonly PersonsDbContext _db;
         private readonly ICountriesService _countriesService;
 
-        public PersonService()
+        public PersonService(PersonsDbContext db, ICountriesService countriesService)
         {
-            _persons = new List<Person>();
-            _countriesService = new CountriesService();
+            _db = db;
+            _countriesService = countriesService;
         }
 
 
@@ -31,7 +31,8 @@ namespace Services
 
             person.PersonID = Guid.NewGuid();
 
-            _persons.Add(person);
+            _db.Persons.Add(person);
+            _db.SaveChanges();
 
            PersonResponse personResponse = convertPersonToPersonResponse(person);
 
@@ -40,7 +41,7 @@ namespace Services
 
         public List<PersonResponse> GetAllPersons()
         {
-            return _persons.Select(p => p.ToPersonResponse()).ToList();
+            return _db.Persons.Select(p => p.ToPersonResponse()).ToList();
         }
 
         public List<PersonResponse> GetFilteredPersons(string searchBy, string? searchString)
@@ -95,11 +96,17 @@ namespace Services
             return matchingPersons;
         }
 
+        //public List<PersonResponse> GetSortedPersons(List<PersonResponse> allPersons ,string sortBy, SortOrderOptions sortOrder)
+        //{
+        //    if (string.IsNullOrEmpty(sortBy)) return allPersons;
+        //}
+
+
         public PersonResponse? GetPersonByPersonId(Guid? personId)
         {
             if (personId == null) return null;
 
-            Person? person = _persons.FirstOrDefault(p => p.PersonID == personId);
+            Person? person = _db.Persons.FirstOrDefault(p => p.PersonID == personId);
             if (person == null) return null;
 
             PersonResponse personResponse = person.ToPersonResponse();

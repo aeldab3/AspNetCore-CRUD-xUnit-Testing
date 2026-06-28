@@ -9,10 +9,10 @@ namespace Services
     /// </summary>
     public class CountriesService : ICountriesService
     {
-        private readonly List<Country> _countries;
-        public CountriesService()
+        private readonly PersonsDbContext _db;
+        public CountriesService(PersonsDbContext db)
         {
-            _countries = new List<Country>();
+            _db = db;
         }
 
 
@@ -24,21 +24,23 @@ namespace Services
             if (countryAddRequest.CountryName == null)
                 throw new ArgumentException("CountryName cannot be null", nameof(countryAddRequest.CountryName));
 
-            var newCountry = _countries.Where(c => c.CountryName == countryAddRequest.CountryName).Count() > 0;
+            var newCountry = _db.Countries.Count(c => c.CountryName == countryAddRequest.CountryName) > 0;
             if (newCountry)
                 throw new ArgumentException($"Country with name '{countryAddRequest.CountryName}' already exists.", nameof(countryAddRequest.CountryName));
 
             Country country = countryAddRequest.ToCountry();
             country.CountryID = Guid.NewGuid();
 
-            _countries.Add(country);
+            _db.Countries.Add(country);
+            _db.SaveChanges();
+
             return country.ToCountryResponse();
         }
 
 
         public List<CountryResponse> GetAllCountries()
         {
-            return _countries.Select(c => c.ToCountryResponse()).ToList();
+            return _db.Countries.Select(c => c.ToCountryResponse()).ToList();
         }
 
 
@@ -46,7 +48,7 @@ namespace Services
         {
             if (countryID == null) return null;
 
-            Country? country = _countries.FirstOrDefault(c => c.CountryID == countryID);
+            Country? country = _db.Countries.FirstOrDefault(c => c.CountryID == countryID);
 
             if (country == null) return null;
 
