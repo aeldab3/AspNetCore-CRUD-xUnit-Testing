@@ -1,6 +1,7 @@
 ﻿using Entities.Models;
 using ServiceContracts;
 using ServiceContracts.DTO;
+using ServiceContracts.Enums;
 using Services.Helper;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
@@ -11,13 +12,22 @@ namespace Services
     public class PersonService : IPersonService
     {
 
-        private readonly PersonsDbContext _db;
+        //private readonly PersonsDbContext _db;
+        //private readonly ICountriesService _countriesService;
+
+        //public PersonService(PersonsDbContext db, ICountriesService countriesService)
+        //{
+        //    _db = db;
+        //    _countriesService = countriesService;
+        //}
+
+        private readonly List<Person> _db;
         private readonly ICountriesService _countriesService;
 
-        public PersonService(PersonsDbContext db, ICountriesService countriesService)
+        public PersonService()
         {
-            _db = db;
-            _countriesService = countriesService;
+            _db = new List<Person>();
+            _countriesService = new CountriesService();
         }
 
 
@@ -31,8 +41,9 @@ namespace Services
 
             person.PersonID = Guid.NewGuid();
 
-            _db.Persons.Add(person);
-            _db.SaveChanges();
+            _db.Add(person);
+            //_db.Persons.Add(person);
+            //_db.SaveChanges();
 
            PersonResponse personResponse = convertPersonToPersonResponse(person);
 
@@ -41,7 +52,8 @@ namespace Services
 
         public List<PersonResponse> GetAllPersons()
         {
-            return _db.Persons.Select(p => p.ToPersonResponse()).ToList();
+            //return _db.Persons.Select(p => p.ToPersonResponse()).ToList();
+            return _db.Select(p => p.ToPersonResponse()).ToList();
         }
 
         public List<PersonResponse> GetFilteredPersons(string searchBy, string? searchString)
@@ -96,17 +108,74 @@ namespace Services
             return matchingPersons;
         }
 
-        //public List<PersonResponse> GetSortedPersons(List<PersonResponse> allPersons ,string sortBy, SortOrderOptions sortOrder)
-        //{
-        //    if (string.IsNullOrEmpty(sortBy)) return allPersons;
-        //}
+        public List<PersonResponse> GetSortedPersons(List<PersonResponse> allPersons, string sortBy, SortOrderOptions sortOrder)
+        {
+            if (string.IsNullOrEmpty(sortBy)) return allPersons;
+
+            List<PersonResponse> sortedPersons = (sortBy, sortOrder)
+            switch
+            {
+                (nameof(PersonResponse.PersonName), SortOrderOptions.ASC) =>
+                allPersons.OrderBy(p => p.PersonName, StringComparer.OrdinalIgnoreCase).ToList(),
+
+                (nameof(PersonResponse.PersonName), SortOrderOptions.DESC) => 
+                allPersons.OrderByDescending(p => p.PersonName, StringComparer.OrdinalIgnoreCase).ToList(),
+
+                (nameof(PersonResponse.Email), SortOrderOptions.ASC) =>
+                allPersons.OrderBy(p => p.Email, StringComparer.OrdinalIgnoreCase).ToList(),
+
+                (nameof(PersonResponse.Email), SortOrderOptions.DESC) => 
+                allPersons.OrderByDescending(p => p.Email, StringComparer.OrdinalIgnoreCase).ToList(),
+
+                (nameof(PersonResponse.DateOfBirth), SortOrderOptions.ASC) =>
+                allPersons.OrderBy(p => p.DateOfBirth).ToList(),
+
+                (nameof(PersonResponse.DateOfBirth), SortOrderOptions.DESC) => 
+                allPersons.OrderByDescending(p => p.DateOfBirth).ToList(),
+
+                (nameof(PersonResponse.Age), SortOrderOptions.ASC) =>
+                allPersons.OrderBy(p => p.Age).ToList(),
+
+                (nameof(PersonResponse.Age), SortOrderOptions.DESC) => 
+                allPersons.OrderByDescending(p => p.Age).ToList(),
+
+                (nameof(PersonResponse.Gender), SortOrderOptions.ASC) =>
+                allPersons.OrderBy(p => p.Gender, StringComparer.OrdinalIgnoreCase).ToList(),
+    
+                (nameof(PersonResponse.Gender), SortOrderOptions.DESC) =>
+                allPersons.OrderByDescending(p => p.Gender, StringComparer.OrdinalIgnoreCase).ToList(),
+
+                (nameof(PersonResponse.Country), SortOrderOptions.ASC) =>
+                allPersons.OrderBy(p => p.Country, StringComparer.OrdinalIgnoreCase).ToList(),
+
+                (nameof(PersonResponse.Country), SortOrderOptions.DESC) =>
+                allPersons.OrderByDescending(p => p.Country, StringComparer.OrdinalIgnoreCase).ToList(),
+
+                (nameof(PersonResponse.Address), SortOrderOptions.ASC) =>
+                allPersons.OrderBy(p => p.Address, StringComparer.OrdinalIgnoreCase).ToList(),
+
+                (nameof(PersonResponse.Address), SortOrderOptions.DESC) =>
+                allPersons.OrderByDescending(p => p.Address, StringComparer.OrdinalIgnoreCase).ToList(),
+
+                (nameof(PersonResponse.ReceiveNewsLetters), SortOrderOptions.ASC) =>
+                allPersons.OrderBy(p => p.ReceiveNewsLetters).ToList(),
+
+                (nameof(PersonResponse.ReceiveNewsLetters), SortOrderOptions.DESC) =>
+                allPersons.OrderByDescending(p => p.ReceiveNewsLetters).ToList(),
+
+                _ => allPersons
+            };
+
+            return sortedPersons;
+        }
 
 
         public PersonResponse? GetPersonByPersonId(Guid? personId)
         {
             if (personId == null) return null;
 
-            Person? person = _db.Persons.FirstOrDefault(p => p.PersonID == personId);
+            Person? person = _db.FirstOrDefault(p => p.PersonID == personId);
+            //Person? person = _db.Persons.FirstOrDefault(p => p.PersonID == personId);
             if (person == null) return null;
 
             PersonResponse personResponse = person.ToPersonResponse();

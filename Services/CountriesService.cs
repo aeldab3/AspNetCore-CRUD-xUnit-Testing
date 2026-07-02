@@ -9,10 +9,15 @@ namespace Services
     /// </summary>
     public class CountriesService : ICountriesService
     {
-        private readonly PersonsDbContext _db;
-        public CountriesService(PersonsDbContext db)
+        //private readonly PersonsDbContext _db;
+        //public CountriesService(PersonsDbContext db)
+        //{
+        //    _db = db;
+        //}
+        private readonly List<Country> _db;
+        public CountriesService()
         {
-            _db = db;
+            _db = new List<Country>();
         }
 
 
@@ -24,15 +29,17 @@ namespace Services
             if (countryAddRequest.CountryName == null)
                 throw new ArgumentException("CountryName cannot be null", nameof(countryAddRequest.CountryName));
 
-            var newCountry = _db.Countries.Count(c => c.CountryName == countryAddRequest.CountryName) > 0;
+            //var newCountry = _db.Countries.Count(c => c.CountryName == countryAddRequest.CountryName) > 0;
+            var newCountry = _db.Count(c => c.CountryName == countryAddRequest.CountryName) > 0;
             if (newCountry)
                 throw new ArgumentException($"Country with name '{countryAddRequest.CountryName}' already exists.", nameof(countryAddRequest.CountryName));
 
             Country country = countryAddRequest.ToCountry();
             country.CountryID = Guid.NewGuid();
 
-            _db.Countries.Add(country);
-            _db.SaveChanges();
+            //_db.Countries.Add(country);
+            _db.Add(country);
+            //_db.SaveChanges();
 
             return country.ToCountryResponse();
         }
@@ -40,7 +47,8 @@ namespace Services
 
         public List<CountryResponse> GetAllCountries()
         {
-            return _db.Countries.Select(c => c.ToCountryResponse()).ToList();
+            //return _db.Countries.Select(c => c.ToCountryResponse()).ToList();
+            return _db.Select(c => c.ToCountryResponse()).ToList();
         }
 
 
@@ -48,7 +56,8 @@ namespace Services
         {
             if (countryID == null) return null;
 
-            Country? country = _db.Countries.FirstOrDefault(c => c.CountryID == countryID);
+            //Country? country = _db.Countries.FirstOrDefault(c => c.CountryID == countryID);
+            Country? country = _db.FirstOrDefault(c => c.CountryID == countryID);
 
             if (country == null) return null;
 
