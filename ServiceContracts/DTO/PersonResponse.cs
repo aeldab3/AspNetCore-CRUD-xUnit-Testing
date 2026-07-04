@@ -1,4 +1,5 @@
 ﻿using Entities.Models;
+using ServiceContracts.Enums;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
@@ -46,6 +47,21 @@ namespace ServiceContracts.DTO
         {
             return $"Person ID: {PersonID}, Person Name: {PersonName}, Email: {Email}, Address: {Address}, Country Id: {CountryId}, Date Of Birth: {DateOfBirth}, Gender: {Gender}, Receive News Letters {ReceiveNewsLetters}";
         }
+
+        public PersonUpdateRequest ToPersonUpdateRequest()
+        {
+            return new PersonUpdateRequest()
+            {
+                PersonID = PersonID,
+                PersonName = PersonName,
+                Email = Email,
+                DateOfBirth = DateOfBirth,
+                Gender = (GenderOptions)Enum.Parse(typeof(GenderOptions), Gender, true),
+                Address = Address,
+                ReceiveNewsLetters = ReceiveNewsLetters,
+                CountryId = CountryId,
+            };
+        }
     }
 
     public static class PersonExtensions
@@ -71,5 +87,6 @@ namespace ServiceContracts.DTO
 
             };
         }
+
     }
 }
