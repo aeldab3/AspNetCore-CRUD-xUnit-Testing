@@ -194,5 +194,10 @@ namespace Services
             personResponse.Country = _countriesService.GetCountryByCountryID(person.CountryId)?.CountryName;
             return personResponse;
         }
+
+        public PersonResponse UpdatePerson(PersonUpdateRequest? personUpdateRequest)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
