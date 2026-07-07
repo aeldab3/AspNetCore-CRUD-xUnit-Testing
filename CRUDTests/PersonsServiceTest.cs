@@ -516,7 +516,10 @@ namespace CRUDTests
             PersonAddRequest personAddRequest = new PersonAddRequest()
             {
                 PersonName = "Lara",
-                CountryId = countryResponse.CountryID
+                CountryId = countryResponse.CountryID,
+                Email = "Lara@gmail.com",
+                Address = "Address",
+                Gender = GenderOptions.Female
             };
             PersonResponse personResponse = _personService.AddPerson(personAddRequest);
 
@@ -532,7 +535,7 @@ namespace CRUDTests
         }
 
 
-        // Add a new person then try to update person name and email 
+        // When valid updated details are supplied, the person's information should be updated successfully
         [Fact]
         public void UpdatePerson_PersonFullDetailsUpdation()
         {
