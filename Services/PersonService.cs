@@ -12,22 +12,13 @@ namespace Services
     public class PersonService : IPersonService
     {
 
-        //private readonly PersonsDbContext _db;
-        //private readonly ICountriesService _countriesService;
-
-        //public PersonService(PersonsDbContext db, ICountriesService countriesService)
-        //{
-        //    _db = db;
-        //    _countriesService = countriesService;
-        //}
-
-        private readonly List<Person> _db;
+        private readonly PersonsDbContext _db;
         private readonly ICountriesService _countriesService;
 
-        public PersonService()
+        public PersonService(PersonsDbContext db, ICountriesService countriesService)
         {
-            _db = new List<Person>();
-            _countriesService = new CountriesService();
+            _db = db;
+            _countriesService = countriesService;
         }
 
 
@@ -42,18 +33,17 @@ namespace Services
             person.PersonID = Guid.NewGuid();
 
             _db.Add(person);
-            //_db.Persons.Add(person);
-            //_db.SaveChanges();
+            _db.Persons.Add(person);
+            _db.SaveChanges();
 
-           PersonResponse personResponse = convertPersonToPersonResponse(person);
+            PersonResponse personResponse = convertPersonToPersonResponse(person);
 
            return personResponse;
         }
 
         public List<PersonResponse> GetAllPersons()
         {
-            //return _db.Persons.Select(p => p.ToPersonResponse()).ToList();
-            return _db.Select(p => p.ToPersonResponse()).ToList();
+            return _db.Persons.ToList().Select(p => convertPersonToPersonResponse(p)).ToList();
         }
 
         public List<PersonResponse> GetFilteredPersons(string searchBy, string? searchString)
@@ -165,7 +155,6 @@ namespace Services
 
                 _ => allPersons
             };
-
             return sortedPersons;
         }
 
@@ -174,8 +163,7 @@ namespace Services
         {
             if (personId == null) return null;
 
-            Person? person = _db.FirstOrDefault(p => p.PersonID == personId);
-            //Person? person = _db.Persons.FirstOrDefault(p => p.PersonID == personId);
+            Person? person = _db.Persons.FirstOrDefault(p => p.PersonID == personId);
             if (person == null) return null;
 
             PersonResponse personResponse = person.ToPersonResponse();
@@ -183,25 +171,13 @@ namespace Services
         }
 
 
-        /// <summary>
-        /// Used To Convert Person to Person Response
-        /// </summary>
-        /// <param name="person"></param>
-        /// <returns>Person Response</returns>
-        private PersonResponse? convertPersonToPersonResponse(Person person)
-        {
-            PersonResponse personResponse = person.ToPersonResponse();
-            personResponse.Country = _countriesService.GetCountryByCountryID(person.CountryId)?.CountryName;
-            return personResponse;
-        }
-
         public PersonResponse UpdatePerson(PersonUpdateRequest? personUpdateRequest)
         {
             if (personUpdateRequest == null) throw new ArgumentNullException(nameof(personUpdateRequest));
 
             ValidationHelper.ModelValidation(personUpdateRequest);
 
-            Person? matchingPerson = _db.FirstOrDefault(p => p.PersonID == personUpdateRequest.PersonID);
+            Person? matchingPerson = _db.Persons.FirstOrDefault(p => p.PersonID == personUpdateRequest.PersonID);
             if (matchingPerson == null) throw new ArgumentException(nameof(matchingPerson));
 
             matchingPerson.PersonName = personUpdateRequest.PersonName;
@@ -212,19 +188,36 @@ namespace Services
             matchingPerson.ReceiveNewsLetters = personUpdateRequest.ReceiveNewsLetters;
             matchingPerson.CountryId = personUpdateRequest.CountryId;
 
-            return matchingPerson.ToPersonResponse();
+            _db.SaveChanges();
+
+            return convertPersonToPersonResponse(matchingPerson);
         }
 
         public bool DeletePerson(Guid? PersonID)
         {
             if (PersonID == null) throw new ArgumentNullException(nameof(PersonID)); 
 
-            Person? person = _db.FirstOrDefault(p => p.PersonID == PersonID);
+            Person? person = _db.Persons.FirstOrDefault(p => p.PersonID == PersonID);
             if (person == null) return false;
 
-            _db.RemoveAll(p => p.PersonID == PersonID);
+            _db.Persons.Remove(_db.Persons.First(p => p.PersonID == PersonID));
+            _db.SaveChanges();
 
             return true;
         }
+
+
+        /// <summary>
+        /// Used To Convert Person to Person Response
+        /// </summary>
+        /// <param name="person"></param>
+        /// <returns>Person Response</returns>
+        private PersonResponse convertPersonToPersonResponse(Person person)
+        {
+            PersonResponse personResponse = person.ToPersonResponse();
+            personResponse.Country = _countriesService.GetCountryByCountryID(person.CountryId)?.CountryName;
+            return personResponse;
+        }
+
     }
 }
