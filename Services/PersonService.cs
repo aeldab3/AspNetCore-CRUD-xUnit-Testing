@@ -32,7 +32,6 @@ namespace Services
 
             person.PersonID = Guid.NewGuid();
 
-            _db.Add(person);
             _db.Persons.Add(person);
             _db.SaveChanges();
 
@@ -43,7 +42,7 @@ namespace Services
 
         public List<PersonResponse> GetAllPersons()
         {
-            return _db.Persons.ToList().Select(p => convertPersonToPersonResponse(p)).ToList();
+            return _db.sp_GetAllPersons().Select(p => convertPersonToPersonResponse(p)).ToList();
         }
 
         public List<PersonResponse> GetFilteredPersons(string searchBy, string? searchString)
@@ -200,7 +199,7 @@ namespace Services
             Person? person = _db.Persons.FirstOrDefault(p => p.PersonID == PersonID);
             if (person == null) return false;
 
-            _db.Persons.Remove(_db.Persons.First(p => p.PersonID == PersonID));
+            _db.Persons.Remove(person);
             _db.SaveChanges();
 
             return true;
