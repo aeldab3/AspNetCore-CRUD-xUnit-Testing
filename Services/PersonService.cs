@@ -31,13 +31,12 @@ namespace Services
             Person person = personRequest.ToPerson();
 
             person.PersonID = Guid.NewGuid();
-
-            _db.Persons.Add(person);
-            _db.SaveChanges();
+            
+            _db.sp_InsertPerson(person);
 
             PersonResponse personResponse = convertPersonToPersonResponse(person);
 
-           return personResponse;
+            return personResponse;
         }
 
         public List<PersonResponse> GetAllPersons()
