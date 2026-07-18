@@ -25,5 +25,8 @@ namespace Entities.Models
         [StringLength(80)]
         public string? Address { get; set; }
         public bool ReceiveNewsLetters { get; set; }
+
+        [StringLength(80)]
+        public string? TIN {  get; set; }
     }
 }

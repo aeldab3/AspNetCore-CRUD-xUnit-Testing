@@ -37,6 +37,14 @@ namespace Entities.Models
 
             foreach (var person in persons)
                 modelBuilder.Entity<Person>().HasData(person);
+
+            modelBuilder.Entity<Person>().Property(p => p.TIN)
+                .HasColumnName("TaxIdentificationNumber")
+                .HasColumnType("varchar(8)")
+                .HasDefaultValue("A.Eldab3");
+
+            modelBuilder.Entity<Person>()
+                .HasCheckConstraint("CHK_TIN", "len([TaxIdentificationNumber]) = 8");
         }
 
         public IEnumerable<Person> sp_GetAllPersons()
