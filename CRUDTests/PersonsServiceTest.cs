@@ -30,12 +30,12 @@ namespace CRUDTests
         #region Add Person
         // When Supply Null Value
         [Fact]
-        public void AddPerson_NullPerson()
+        public async Task AddPerson_NullPerson()
         {
             // Arrange
             PersonAddRequest? personAddRequest = null;
 
-            Assert.Throws<ArgumentNullException>(() =>
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
                 _personService.AddPerson(personAddRequest);
             });
