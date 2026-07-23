@@ -37,14 +37,14 @@ namespace Services
 
             //_db.sp_InsertPerson(person);
 
-            PersonResponse personResponse = convertPersonToPersonResponse(person);
+            PersonResponse personResponse = person.ToPersonResponse();
 
             return personResponse;
         }
 
         public List<PersonResponse> GetAllPersons()
         {
-            return _db.Persons.ToList().Select(p => convertPersonToPersonResponse(p)).ToList();
+            return _db.Persons.ToList().Select(p => p.ToPersonResponse()).ToList();
             //return _db.sp_GetAllPersons().Select(p => convertPersonToPersonResponse(p)).ToList();
         }
 
@@ -192,7 +192,7 @@ namespace Services
 
             _db.SaveChanges();
 
-            return convertPersonToPersonResponse(matchingPerson);
+            return matchingPerson.ToPersonResponse();
         }
 
         public bool DeletePerson(Guid? PersonID)
@@ -206,19 +206,6 @@ namespace Services
             _db.SaveChanges();
 
             return true;
-        }
-
-
-        /// <summary>
-        /// Used To Convert Person to Person Response
-        /// </summary>
-        /// <param name="person"></param>
-        /// <returns>Person Response</returns>
-        private PersonResponse convertPersonToPersonResponse(Person person)
-        {
-            PersonResponse personResponse = person.ToPersonResponse();
-            personResponse.Country = _countriesService.GetCountryByCountryID(person.CountryId)?.CountryName;
-            return personResponse;
         }
 
     }
