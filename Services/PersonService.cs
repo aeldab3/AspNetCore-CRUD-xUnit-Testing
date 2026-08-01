@@ -1,5 +1,6 @@
 ﻿using Entities.Models;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
@@ -15,11 +16,13 @@ namespace Services
 
         private readonly PersonsDbContext _db;
         private readonly ICountriesService _countriesService;
+        private readonly IDiagnosticContext _diagnosticContext;
 
-        public PersonService(PersonsDbContext db, ICountriesService countriesService)
+        public PersonService(PersonsDbContext db, ICountriesService countriesService, IDiagnosticContext diagnosticContext)
         {
             _db = db;
             _countriesService = countriesService;
+            _diagnosticContext = diagnosticContext;
         }
 
 
@@ -98,6 +101,7 @@ namespace Services
 
                 default: matchingPersons = allPersons; break;
             }
+            _diagnosticContext.Set("Persons", allPersons);
             return matchingPersons;
         }
 

@@ -38,6 +38,8 @@ builder.Services.AddHttpLogging(o =>
 
 var app = builder.Build();
 
+app.UseSerilogRequestLogging();
+
 if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 
