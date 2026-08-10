@@ -3,7 +3,7 @@ using Serilog.Core;
 
 namespace CRUDExample.Filters.ActionFilters
 {
-    public class ResponseHeaderActionFilter : IActionFilter
+    public class ResponseHeaderActionFilter : IAsyncActionFilter
     {
         private readonly ILogger<ResponseHeaderActionFilter> _logger;
         private readonly string _key;
@@ -14,22 +14,22 @@ namespace CRUDExample.Filters.ActionFilters
             _key = key;
             _value = value;
         }
-        public void OnActionExecuted(ActionExecutedContext context)
-        {
-            _logger.LogInformation("{FilterNeme}.{MethodName] method",
-                nameof(PersonsListActionFilter),
-                nameof(OnActionExecuted)
-            );
-        }
 
-        public void OnActionExecuting(ActionExecutingContext context)
+        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            _logger.LogInformation("{FilterNeme}.{MethodName] method",
+            _logger.LogInformation("{FilterNeme}.{MethodName] method - before ",
                 nameof(PersonsListActionFilter),
-                nameof(OnActionExecuting)
+                nameof(OnActionExecutionAsync)
             );
 
-            context.HttpContext.Response.Headers[_key] = _value; 
+            await next();
+
+            _logger.LogInformation("{FilterNeme}.{MethodName] method - after",
+                nameof(PersonsListActionFilter),
+                nameof(OnActionExecutionAsync)
+            );
+
+            context.HttpContext.Response.Headers[_key] = _value;
         }
     }
 }
